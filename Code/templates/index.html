@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnTube Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>LearnTube portal</h1>
+    <p>Search video for Youtube if it is learning/technology-related (W) or not (L).</p>
+    <input type="text" id="textInput" placeholder="Enter your text here..." />
+    <button onclick="classifyText()">Classify</button>
+    <div id="result"></div>
+
+    <script>
+        async function classifyText() {
+            const textInput = document.getElementById("textInput").value;
+            const resultDiv = document.getElementById("result");
+
+            if (!textInput.trim()) {
+                resultDiv.innerHTML = "Please enter some text!";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/classify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ query: textInput }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to classify the text.");
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `Classification: ${data.classification}`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
